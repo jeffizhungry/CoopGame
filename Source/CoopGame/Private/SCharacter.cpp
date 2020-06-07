@@ -71,5 +71,8 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	// Crouch
 	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, & ASCharacter::BeginCrouch);
 	PlayerInputComponent->BindAction("Crouch", IE_Released, this, & ASCharacter::EndCrouch);
+
+	// Jump
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 }
 
