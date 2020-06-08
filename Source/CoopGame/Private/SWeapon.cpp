@@ -17,7 +17,6 @@ ASWeapon::ASWeapon()
 void ASWeapon::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 void ASWeapon::Fire()
