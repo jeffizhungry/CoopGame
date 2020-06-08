@@ -2,6 +2,7 @@
 
 #include "SWeapon.h"
 #include "DrawDebugHelpers.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ASWeapon::ASWeapon()
@@ -30,6 +31,7 @@ void ASWeapon::Fire()
 
 		FVector TraceStart = EyeLocation;
 		FVector TraceEnd = EyeLocation + (EyeRotation.Vector() * 10000);
+		FVector ShotDirection = EyeRotation.Vector();
 
 		// Ignore this weapon and owner, and do complex trace so we know exactly where it's hit
 		// Complex is a bit more expensive, but it's okay for now.
@@ -41,7 +43,9 @@ void ASWeapon::Fire()
 		// If this trace hit something
 		FHitResult Hit;
 		if (GetWorld()->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, ECC_Visibility, QueryParams)) {
+			AActor* HitActor = Hit.GetActor();
 
+			UGameplayStatics::ApplyPointDamage(HitActor, 20.0f, ShotDirection, Hit, ThisOwner->GetInstigatorController(), this, DamageType);
 		}
 		DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::White, false, 1.0f, 0, 1.0f);
 	}
