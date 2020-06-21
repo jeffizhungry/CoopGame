@@ -6,13 +6,9 @@
 #include "Particles/ParticleSystem.h"
 #include "Particles/ParticleSystemComponent.h"
 
-
 // Sets default values
 ASWeapon::ASWeapon()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
 	MeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("MeshComp"));
 	RootComponent = MeshComp;
 
@@ -64,28 +60,26 @@ void ASWeapon::Fire()
 
 			TraceEndPoint = Hit.ImpactPoint;
 		}
+
 		DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::White, false, 1.0f, 0, 1.0f);
 
-		// Show muzzle flash regardless of hit
-		if (MuzzleEffect) {
-			UGameplayStatics::SpawnEmitterAttached(MuzzleEffect, MeshComp, MuzzleSocketName);
-		}
-		
-		// Show effect regardless of hit
-		if (TracerEffect) {
-			FVector MuzzleLocation = MeshComp->GetSocketLocation(MuzzleSocketName);
-			UParticleSystemComponent* TracerComp = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), TracerEffect, MuzzleLocation);
-			if (TracerComp) {
-				TracerComp->SetVectorParameter(TracerTargetName, TraceEndPoint);
-			}
-		}
+		PlayFireEffects(TraceEndPoint);
 	}
 }
 
-// Called every frame
-void ASWeapon::Tick(float DeltaTime)
+void ASWeapon::PlayFireEffects(FVector TraceEndPoint)
 {
-	Super::Tick(DeltaTime);
+	// Show muzzle flash regardless of hit
+	if (MuzzleEffect) {
+		UGameplayStatics::SpawnEmitterAttached(MuzzleEffect, MeshComp, MuzzleSocketName);
+	}
 
+	// Show effect regardless of hit
+	if (TracerEffect) {
+		FVector MuzzleLocation = MeshComp->GetSocketLocation(MuzzleSocketName);
+		UParticleSystemComponent* TracerComp = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), TracerEffect, MuzzleLocation);
+		if (TracerComp) {
+			TracerComp->SetVectorParameter(TracerTargetName, TraceEndPoint);
+		}
+	}
 }
-
