@@ -5,6 +5,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystem.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "PhysicalMaterials/PhysicalMaterial.h"
+#include "CoopGame/CoopGame.h"
 
 // Sets default values
 ASWeapon::ASWeapon()
@@ -44,6 +46,7 @@ void ASWeapon::Fire()
 		QueryParams.AddIgnoredActor(ThisOwner);
 		QueryParams.AddIgnoredActor(this);
 		QueryParams.bTraceComplex = true;
+		QueryParams.bReturnPhysicalMaterial = true;
 
 		// If this trace hit something
 		FHitResult Hit;
@@ -53,7 +56,24 @@ void ASWeapon::Fire()
 			// Apply damage
 			UGameplayStatics::ApplyPointDamage(HitActor, 20.0f, ShotDirection, Hit, ThisOwner->GetInstigatorController(), this, DamageType);
 
+			EPhysicalSurface SurfaceType = UPhysicalMaterial::DetermineSurfaceType(Hit.PhysMaterial.Get());
+
 			// Show impact effect
+			UParticleSystem* ImpactEffect = nullptr;
+			switch (SurfaceType) {
+			case SURFACE_FLESH_DEFAULT:
+				UE_LOG(LogTemp, Warning, TEXT("Hit flesh default surface! %d"), SurfaceType);
+				ImpactEffect = FleshImpactEffect;
+				break;
+			case SURFACE_FLESH_VULNERABLE:
+				UE_LOG(LogTemp, Warning, TEXT("Hit flesh vulnerable surface! %d"), SurfaceType);
+				ImpactEffect = FleshImpactEffect;
+				break;
+			default:
+				UE_LOG(LogTemp, Warning, TEXT("Hit default surface! %d"), SurfaceType);
+				ImpactEffect = DefaultImpactEffect;
+				break;
+			}
 			if (ImpactEffect) {
 				UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactEffect, Hit.ImpactPoint, Hit.ImpactNormal.Rotation());
 			}
