@@ -37,6 +37,22 @@ protected:
 
 	void EndCrouch();
 
+	void BeginZoom();
+
+	void EndZoom();
+
+	bool bWantsToZoom;
+
+	// FOV set on BeginPlay
+	float DefaultFOV;
+
+	// FOV value used when user want to zoom
+	UPROPERTY(EditDefaultsOnly, Category = "Player")
+	float ZoomedFOV;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Player", meta = (ClampMin = 0.1, ClampMax = 100))
+	float ZoomInterSpeed;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

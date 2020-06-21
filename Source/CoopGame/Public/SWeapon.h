@@ -45,6 +45,7 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
 	UParticleSystem* TracerEffect;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
