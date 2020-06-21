@@ -16,6 +16,8 @@ ASWeapon::ASWeapon()
 
 	MuzzleSocketName = "MuzzleSocket";
 	TracerTargetName = "BeamEnd";
+
+	BaseDamage = 20.0f;
 }
 
 // Called when the game starts or when spawned
@@ -50,13 +52,17 @@ void ASWeapon::Fire()
 
 		// If this trace hit something
 		FHitResult Hit;
-		if (GetWorld()->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, ECC_Visibility, QueryParams)) {
+		if (GetWorld()->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, COLLISION_WEAPON, QueryParams)) {
 			AActor* HitActor = Hit.GetActor();
 
-			// Apply damage
-			UGameplayStatics::ApplyPointDamage(HitActor, 20.0f, ShotDirection, Hit, ThisOwner->GetInstigatorController(), this, DamageType);
-
 			EPhysicalSurface SurfaceType = UPhysicalMaterial::DetermineSurfaceType(Hit.PhysMaterial.Get());
+
+			// Apply damage (bonus for headshots)
+			float ApplyDamage = BaseDamage;
+			if (SurfaceType == SURFACE_FLESH_VULNERABLE) {
+				ApplyDamage *= 4;
+			}
+			UGameplayStatics::ApplyPointDamage(HitActor, ApplyDamage, ShotDirection, Hit, ThisOwner->GetInstigatorController(), this, DamageType);
 
 			// Show impact effect
 			UParticleSystem* ImpactEffect = nullptr;
