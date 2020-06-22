@@ -6,6 +6,8 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/PawnMovementComponent.h"
 #include "..\Public\SCharacter.h"
+#include "Components/CapsuleComponent.h"
+#include "CoopGame/CoopGame.h"
 
 // Sets default values
 ASCharacter::ASCharacter()
@@ -21,6 +23,8 @@ ASCharacter::ASCharacter()
 	CameraComp->SetupAttachment(SpringArmComp);
 
 	GetMovementComponent()->GetNavAgentPropertiesRef().bCanCrouch = true;
+
+	GetCapsuleComponent()->SetCollisionResponseToChannel(COLLISION_WEAPON, ECR_Ignore);
 
 	// Defaults
 	ZoomedFOV = 65.0f;

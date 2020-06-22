@@ -19,7 +19,7 @@ ASWeapon::ASWeapon()
 	TracerTargetName = "BeamEnd";
 
 	BaseDamage = 20.0f;
-	RateOfFire = 1;
+	RateOfFire = 9.0f;
 }
 
 // Called when the game starts or when spawned
@@ -36,7 +36,7 @@ void ASWeapon::StartFire()
 	if (FirstDelay < 0) {
 		FirstDelay = 0.0f;
 	}
-	GetWorldTimerManager().SetTimer(TimerHandleTimeBetweenShots, this, &ASWeapon::Fire, 1.0f, true, FirstDelay);
+	GetWorldTimerManager().SetTimer(TimerHandleTimeBetweenShots, this, &ASWeapon::Fire, TimeBetweenShots, true, FirstDelay);
 }
 
 void ASWeapon::StopFire()
