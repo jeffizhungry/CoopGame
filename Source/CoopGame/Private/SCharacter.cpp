@@ -57,6 +57,20 @@ void ASCharacter::MoveRight(float Value)
 	AddMovementInput(GetActorRightVector() * Value);
 }
 
+void ASCharacter::BeginFire()
+{
+	if (CurrentWeapon) {
+		CurrentWeapon->StartFire();
+	}
+}
+
+void ASCharacter::EndFire()
+{
+	if (CurrentWeapon) {
+		CurrentWeapon->StopFire();
+	}
+}
+
 void ASCharacter::BeginCrouch()
 {
 	Crouch();
@@ -75,13 +89,6 @@ void ASCharacter::BeginZoom()
 void ASCharacter::EndZoom()
 {
 	bWantsToZoom = false;
-}
-
-void ASCharacter::Fire()
-{
-	if (CurrentWeapon) {
-		CurrentWeapon->Fire();
-	}
 }
 
 // Called every frame
@@ -121,7 +128,8 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("Zoom", IE_Released, this, &ASCharacter::EndZoom);
 
 	// Fire
-	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ASCharacter::Fire);
+	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ASCharacter::BeginFire);
+	PlayerInputComponent->BindAction("Fire", IE_Released, this, &ASCharacter::EndFire);
 }
 
 

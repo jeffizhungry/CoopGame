@@ -34,6 +34,10 @@ protected:
 
 	void MoveRight(float Value);
 
+	void BeginFire();
+
+	void EndFire();
+
 	void BeginCrouch();
 
 	void EndCrouch();

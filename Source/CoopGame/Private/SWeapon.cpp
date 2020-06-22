@@ -7,6 +7,7 @@
 #include "Particles/ParticleSystemComponent.h"
 #include "PhysicalMaterials/PhysicalMaterial.h"
 #include "CoopGame/CoopGame.h"
+#include "TimerManager.h"
 
 // Sets default values
 ASWeapon::ASWeapon()
@@ -18,12 +19,29 @@ ASWeapon::ASWeapon()
 	TracerTargetName = "BeamEnd";
 
 	BaseDamage = 20.0f;
+	RateOfFire = 1;
 }
 
 // Called when the game starts or when spawned
 void ASWeapon::BeginPlay()
 {
 	Super::BeginPlay();
+
+	TimeBetweenShots = 1 / RateOfFire;
+}
+
+void ASWeapon::StartFire()
+{
+	float FirstDelay = LastFiredTime + TimeBetweenShots - GetWorld()->TimeSeconds;
+	if (FirstDelay < 0) {
+		FirstDelay = 0.0f;
+	}
+	GetWorldTimerManager().SetTimer(TimerHandleTimeBetweenShots, this, &ASWeapon::Fire, 1.0f, true, FirstDelay);
+}
+
+void ASWeapon::StopFire()
+{
+	GetWorldTimerManager().ClearTimer(TimerHandleTimeBetweenShots);
 }
 
 void ASWeapon::Fire()
@@ -90,6 +108,8 @@ void ASWeapon::Fire()
 		DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::White, false, 1.0f, 0, 1.0f);
 
 		PlayFireEffects(TraceEndPoint);
+
+		LastFiredTime = GetWorld()->TimeSeconds;
 	}
 }
 
